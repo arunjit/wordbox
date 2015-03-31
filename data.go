@@ -14,16 +14,17 @@ const (
 type Word struct {
 	ID   string `datastore:"-" json:"id"`
 	Word string `datastore:"w" json:"word"`
+	Uses int    `datastore:"u" json:"uses"`
 }
 
 // NewWord creates a new word entity.
 func NewWord(w string) *Word {
-	return &Word{"", w}
+	return &Word{Word: w}
 }
 
 // WordByID gets a word entity by ID.
 func WordByID(c appengine.Context, id string) (*Word, error) {
-	w := &Word{id, ""}
+	w := &Word{ID: id}
 	return w.Get(c)
 }
 
