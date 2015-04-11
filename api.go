@@ -7,8 +7,11 @@ import (
 )
 
 var (
-	// ErrNotImplemented error when something isn't implemented
+	// ErrNotImplemented error when something isn't implemented.
 	ErrNotImplemented = errors.New("Not implemented")
+
+	// ErrMissingValue error when a required value is missin.
+	ErrMissingValue = errors.New("Missing value")
 )
 
 // WordService is the endpoints service.
@@ -16,12 +19,12 @@ type WordService struct{}
 
 // GetReq is the request struct to fetch a word from a named wordlist.
 type GetReq struct {
-	WordList string `json:"wordlist"`
+	WordList string `json:"wordlist" endpoints:"req"`
 }
 
 // AddReq is the request struct to add new words.
 type AddReq struct {
-	Words []string `json:"words"`
+	Words []string `json:"words" endpoints:"req"`
 }
 
 // Get fetches a word from a named wordlist.
@@ -43,6 +46,9 @@ func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 func (s *WordService) AddPublic(c endpoints.Context, r *AddReq) error {
 	words := make([]*Word, len(r.Words))
 	for i := 0; i < len(r.Words); i++ {
+		if r.Words[i] == "" {
+			return ErrMissingValue
+		}
 		words[i] = &Word{Word: r.Words[i], Public: true}
 	}
 	return AddAllWords(c, words)
