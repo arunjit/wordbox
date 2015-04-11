@@ -12,7 +12,7 @@ const (
 
 // Word is a word entity.
 type Word struct {
-	ID string `datastore:"-" json:"id"`
+	Key *datastore.Key `datastore:"-" json:"id"`
 
 	// The word
 	Word string `datastore:"w" json:"word"`
@@ -35,7 +35,7 @@ func PublicWord(c appengine.Context) (*Word, error) {
 	if err != nil {
 		return nil, err
 	}
-	word.ID = key.StringID()
+	word.Key = key
 	return &word, nil
 }
 
