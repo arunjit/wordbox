@@ -107,8 +107,8 @@ type CountReq struct {
 // CountRes is a count of words in a wordlist.
 type CountRes struct {
 	N        int    `json:"count"`
-	Public   bool   `json:"public"`
-	WordList string `json:"wordlist"`
+	Public   bool   `json:"public,omitempty"`
+	WordList string `json:"wordlist,omitempty"`
 }
 
 // Count counts the words in a named wordlist/the master wordlist.
