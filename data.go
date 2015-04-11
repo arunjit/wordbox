@@ -1,4 +1,4 @@
-package main
+package wordbox
 
 import (
 	"appengine"
@@ -6,20 +6,37 @@ import (
 )
 
 const (
-	// WordKind is the Datastore kind for the word
-	WordKind = "W"
+	// wordKind is the Datastore kind for the word
+	wordKind = "W"
 )
 
 // Word is a word entity.
 type Word struct {
-	ID   string `datastore:"-" json:"id"`
+	ID string `datastore:"-" json:"id"`
+
+	// The word
 	Word string `datastore:"w" json:"word"`
-	Uses int    `datastore:"u" json:"uses"`
+
+	// The number of times this word has been retrieved.
+	Uses int `datastore:"u" json:"uses"`
+
+	// Whether the word should show up in the master wordlist.
+	Public bool `datastore:"p" json:"public"`
 }
 
-// NewWord creates a new word entity.
-func NewWord(w string) *Word {
-	return &Word{Word: w}
+// PublicWord fetches a word from the master wordlist.
+func PublicWord(c appengine.Context) (*Word, error) {
+	q := datastore.NewQuery(wordKind).
+		Filter("p =", true).
+		Order("u")
+	t := q.Run(c)
+	var word Word
+	key, err := t.Next(&word)
+	if err != nil {
+		return nil, err
+	}
+	word.ID = key.StringID()
+	return &word, nil
 }
 
 // WordByID gets a word entity by ID.
@@ -42,9 +59,14 @@ func (w *Word) Get(c appengine.Context) (*Word, error) {
 
 // Save saves a new word in the Datastore.
 func (w *Word) Save(c appengine.Context) (string, error) {
-	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, WordKind, nil), w)
+	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, wordKind, nil), w)
 	if err != nil {
 		return "", err
 	}
 	return key.Encode(), nil
+}
+
+// GetWordCount counts all words in the Datastore.
+func GetWordCount(c appengine.Context) (int, error) {
+	return datastore.NewQuery(wordKind).Count(c)
 }

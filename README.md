@@ -10,10 +10,9 @@ random word from all the words till no words remain.
 * All available words are exhausted before being repeated.
 * Used words cannot be added again.
 
+_currently, all features are TODO_
+
 ## TODO (functional)
 1. Group-based wordlists.
 2. User-centric words: users should be able to fetch only their own
    or only other's words from a wordlist.
-
-## TODO (technical)
-1. Use endpoints.
