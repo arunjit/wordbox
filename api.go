@@ -22,13 +22,19 @@ type GetReq struct {
 	WordList string `json:"wordlist" endpoints:"req"`
 }
 
-// AddReq is the request struct to add new words.
+// AddReq is the request struct to add new words to a named wordlist.
 type AddReq struct {
+	WordList string   `json:"wordlist" endpoints:"req"`
+	Words    []string `json:"words" endpoints:"req"`
+}
+
+// AddPublicReq is the request struct to add new words to the master wordlist.
+type AddPublicReq struct {
 	Words []string `json:"words" endpoints:"req"`
 }
 
 // Get fetches a word from a named wordlist.
-func (s *WordService) Get(c endpoints.Context) (*Word, error) {
+func (s *WordService) Get(c endpoints.Context, r *GetReq) (*Word, error) {
 	return nil, ErrNotImplemented
 }
 
@@ -43,7 +49,7 @@ func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 }
 
 // AddPublic adds new words to the master wordlist.
-func (s *WordService) AddPublic(c endpoints.Context, r *AddReq) error {
+func (s *WordService) AddPublic(c endpoints.Context, r *AddPublicReq) error {
 	words := make([]*Word, len(r.Words))
 	for i := 0; i < len(r.Words); i++ {
 		if r.Words[i] == "" {
