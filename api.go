@@ -11,7 +11,9 @@ var (
 )
 
 // WordService is the endpoints service.
-type WordService struct{}
+type WordService struct {
+	auth Authenticator
+}
 
 // GetReq is the request struct to fetch a word from a named wordlist.
 type GetReq struct {
@@ -31,6 +33,10 @@ type AddPublicReq struct {
 
 // Get fetches a word from a named wordlist.
 func (s *WordService) Get(c endpoints.Context, r *GetReq) (*Word, error) {
+	err := s.auth.CheckAuth(c)
+	if err != nil {
+		return nil, err
+	}
 	return nil, ErrNotImplemented
 }
 
@@ -41,11 +47,19 @@ func (s *WordService) GetPublic(c endpoints.Context) (*Word, error) {
 
 // Add adds new words to a named wordlist.
 func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
+	err := s.auth.CheckAuth(c)
+	if err != nil {
+		return err
+	}
 	return ErrNotImplemented
 }
 
 // AddPublic adds new words to the master wordlist.
 func (s *WordService) AddPublic(c endpoints.Context, r *AddPublicReq) error {
+	err := s.auth.CheckAuth(c)
+	if err != nil {
+		return err
+	}
 	words := make([]*Word, len(r.Words))
 	for i := 0; i < len(r.Words); i++ {
 		if r.Words[i] == "" {
@@ -63,6 +77,10 @@ type Count struct {
 
 // Count counts the words in a named wordlist.
 func (s *WordService) Count(c endpoints.Context) (*Count, error) {
+	err := s.auth.CheckAuth(c)
+	if err != nil {
+		return nil, err
+	}
 	return nil, ErrNotImplemented
 }
 
