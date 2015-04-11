@@ -1,17 +1,13 @@
 package wordbox
 
-import (
-	"errors"
-
-	"github.com/GoogleCloudPlatform/go-endpoints/endpoints"
-)
+import "github.com/GoogleCloudPlatform/go-endpoints/endpoints"
 
 var (
 	// ErrNotImplemented error when something isn't implemented.
-	ErrNotImplemented = errors.New("Not implemented")
+	ErrNotImplemented = endpoints.NewAPIError("NotImplemented", "Not implemented", 501)
 
 	// ErrMissingValue error when a required value is missin.
-	ErrMissingValue = errors.New("Missing value")
+	ErrMissingValue = endpoints.NewBadRequestError("Missing value")
 )
 
 // WordService is the endpoints service.
