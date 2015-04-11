@@ -42,35 +42,8 @@ func (s *WordService) Get(c endpoints.Context, r *GetReq) (*Word, error) {
 	return PublicWord(c)
 }
 
-// AddReq is the request struct to add a new word.
+// AddReq is the request struct to add new words with the same properties.
 type AddReq struct {
-	// The word to add
-	Word string `json:"word"`
-
-	// If true, the word gets added to the master wordlist.
-	Public bool `json:"public"`
-
-	// If set, the word gets added to a named wordlist.
-	// If [Public] is true and a [WordList] is set, both actions are performed.
-	// Not implemented
-	WordList string `json:"wordlist"`
-}
-
-// Add adds a new word to a named wordlist/the master wordlist.
-func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
-	if !r.Public {
-		if r.WordList == "" {
-			return ErrMustBePublicOrWordList
-		}
-		return ErrNotImplemented
-	}
-	word := &Word{Word: r.Word, Public: r.Public}
-	_, err := word.Save(c)
-	return err
-}
-
-// AddMultiReq is the request struct to add multiple new words with the same properties.
-type AddMultiReq struct {
 	// The words to add
 	Words []string `json:"words"`
 
@@ -83,8 +56,8 @@ type AddMultiReq struct {
 	WordList string `json:"wordlist"`
 }
 
-// AddMulti adds multiple new words to a named wordlist/the master wordlist.
-func (s *WordService) AddMulti(c endpoints.Context, r *AddMultiReq) error {
+// Add adds multiple new words to a named wordlist/the master wordlist.
+func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 	if !r.Public {
 		if r.WordList == "" {
 			return ErrMustBePublicOrWordList

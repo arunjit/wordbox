@@ -24,8 +24,7 @@ func init() {
 	}
 
 	register("Get", "get", "GET", "words/one", "Get a word.")
-	register("Add", "add", "PUT", "words/new", "Add a word.")
-	register("AddMulti", "addmulti", "PUT", "words/many-new", "Add many words.")
+	register("Add", "add", "PUT", "words/new", "Add new words.")
 	register("Count", "count", "GET", "words/count", "Count all words.")
 	endpoints.HandleHTTP()
 }
