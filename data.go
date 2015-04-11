@@ -44,15 +44,6 @@ func PublicWordCount(c appengine.Context) (int, error) {
 	return datastore.NewQuery(wordKind).Filter("p =", true).Count(c)
 }
 
-// Save saves a new word in the Datastore.
-func (w *Word) Save(c appengine.Context) (string, error) {
-	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, wordKind, nil), w)
-	if err != nil {
-		return "", err
-	}
-	return key.Encode(), nil
-}
-
 // AddAllWords adds words in a single batch
 func AddAllWords(c appengine.Context, words []*Word) error {
 	keys := make([]*datastore.Key, len(words))
