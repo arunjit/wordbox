@@ -8,7 +8,8 @@ import (
 
 func init() {
 	wordService := &WordService{}
-	api, err := endpoints.RegisterService(wordService, "words", "v1", "Words API", true)
+	api, err := endpoints.RegisterService(wordService,
+		"wordbox", "v1", "A box of words", true)
 	if err != nil {
 		log.Fatalf("Register service: %v", err)
 	}
@@ -22,8 +23,9 @@ func init() {
 		i.Name, i.HTTPMethod, i.Path, i.Desc = name, method, path, desc
 	}
 
-	register("Get", "words.list", "GET", "words", "List words.")
-	register("Add", "words.add", "PUT", "words", "Add a word.")
-	register("Count", "words.count", "GET", "words/count", "Count all words.")
+	register("Get", "get", "GET", "words/one", "Get a word.")
+	register("Add", "add", "PUT", "words/new", "Add a word.")
+	register("AddMulti", "addmulti", "PUT", "words/many-new", "Add many words.")
+	register("Count", "count", "GET", "words/count", "Count all words.")
 	endpoints.HandleHTTP()
 }

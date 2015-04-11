@@ -56,7 +56,7 @@ type AddReq struct {
 	WordList string `json:"wordlist"`
 }
 
-// Add adds a new word to the master wordlist.
+// Add adds a new word to a named wordlist/the master wordlist.
 func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 	if !r.Public {
 		if r.WordList == "" {
@@ -69,16 +69,59 @@ func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 	return err
 }
 
-// Count is a count of words in the master wordlist.
-type Count struct {
-	N int `json:"count"`
+// AddMultiReq is the request struct to add multiple new words with the same properties.
+type AddMultiReq struct {
+	// The words to add
+	Words []string `json:"words"`
+
+	// If true, the words get added to a named wordlist/the master wordlist.
+	Public bool `json:"public"`
+
+	// If set, the words get added to a named wordlist.
+	// If [Public] is true and a [WordList] is set, both actions are performed.
+	// Not implemented
+	WordList string `json:"wordlist"`
 }
 
-// Count counts the words in the master wordlist.
-func (s *WordService) Count(c endpoints.Context) (*Count, error) {
-	n, err := GetWordCount(c)
+// AddMulti adds multiple new words to a named wordlist/the master wordlist.
+func (s *WordService) AddMulti(c endpoints.Context, r *AddMultiReq) error {
+	if !r.Public {
+		if r.WordList == "" {
+			return ErrMustBePublicOrWordList
+		}
+		return ErrNotImplemented
+	}
+	words := make([]*Word, len(r.Words))
+	for i := 0; i < len(r.Words); i++ {
+		words[i] = &Word{Word: r.Words[i], Public: r.Public}
+	}
+	return AddAllWords(c, words)
+}
+
+// CountReq is the request struct to count words in a wordlist.
+type CountReq struct {
+	Public   bool   `json:"public"`
+	WordList string `json:"wordlist"`
+}
+
+// CountRes is a count of words in a wordlist.
+type CountRes struct {
+	N        int    `json:"count"`
+	Public   bool   `json:"public"`
+	WordList string `json:"wordlist"`
+}
+
+// Count counts the words in a named wordlist/the master wordlist.
+func (s *WordService) Count(c endpoints.Context, r *CountReq) (*CountRes, error) {
+	if !r.Public {
+		if r.WordList == "" {
+			return nil, ErrMustBePublicOrWordList
+		}
+		return nil, ErrNotImplemented
+	}
+	n, err := PublicWordCount(c)
 	if err != nil {
 		return nil, err
 	}
-	return &Count{n}, nil
+	return &CountRes{N: n, Public: r.Public}, nil
 }

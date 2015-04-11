@@ -39,22 +39,9 @@ func PublicWord(c appengine.Context) (*Word, error) {
 	return &word, nil
 }
 
-// WordByID gets a word entity by ID.
-func WordByID(c appengine.Context, id string) (*Word, error) {
-	w := &Word{ID: id}
-	return w.Get(c)
-}
-
-// Get gets a word given it's ID.
-func (w *Word) Get(c appengine.Context) (*Word, error) {
-	key, err := datastore.DecodeKey(w.ID)
-	if err != nil {
-		return nil, err
-	}
-	if err := datastore.Get(c, key, w); err != nil {
-		return nil, err
-	}
-	return w, nil
+// PublicWordCount counts all words in the Datastore.
+func PublicWordCount(c appengine.Context) (int, error) {
+	return datastore.NewQuery(wordKind).Filter("p =", true).Count(c)
 }
 
 // Save saves a new word in the Datastore.
@@ -66,7 +53,12 @@ func (w *Word) Save(c appengine.Context) (string, error) {
 	return key.Encode(), nil
 }
 
-// GetWordCount counts all words in the Datastore.
-func GetWordCount(c appengine.Context) (int, error) {
-	return datastore.NewQuery(wordKind).Count(c)
+// AddAllWords adds words in a single batch
+func AddAllWords(c appengine.Context, words []*Word) error {
+	keys := make([]*datastore.Key, len(words))
+	for i := 0; i < len(words); i++ {
+		keys[i] = datastore.NewIncompleteKey(c, wordKind, nil)
+	}
+	_, err := datastore.PutMulti(c, keys, words)
+	return err
 }
