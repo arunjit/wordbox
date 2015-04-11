@@ -23,8 +23,9 @@ func init() {
 		i.Name, i.HTTPMethod, i.Path, i.Desc = name, method, path, desc
 	}
 
-	register("Get", "get", "GET", "words/one", "Get a word.")
-	register("Add", "add", "PUT", "words/new", "Add new words.")
-	register("Count", "count", "GET", "words/count", "Count all words.")
+	register("GetPublic", "getpublic", "GET", "words/public", "Get a word from the master wordlist.")
+	register("AddPublic", "addpublic", "PUT", "words/public", "Add new words to the master wordlist.")
+	register("CountPublic", "countpublic", "GET", "words/public/count",
+		"Count all words in the master wordlist.")
 	endpoints.HandleHTTP()
 }
