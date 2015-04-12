@@ -33,8 +33,7 @@ type AddPublicReq struct {
 
 // Get fetches a word from a named wordlist.
 func (s *WordService) Get(c endpoints.Context, r *GetReq) (*Word, error) {
-	err := s.auth.CheckAuth(c)
-	if err != nil {
+	if err := s.auth.CheckAuth(c); err != nil {
 		return nil, err
 	}
 	return nil, ErrNotImplemented
@@ -47,8 +46,7 @@ func (s *WordService) GetPublic(c endpoints.Context) (*Word, error) {
 
 // Add adds new words to a named wordlist.
 func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
-	err := s.auth.CheckAuth(c)
-	if err != nil {
+	if err := s.auth.CheckAuth(c); err != nil {
 		return err
 	}
 	return ErrNotImplemented
@@ -56,8 +54,7 @@ func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 
 // AddPublic adds new words to the master wordlist.
 func (s *WordService) AddPublic(c endpoints.Context, r *AddPublicReq) error {
-	err := s.auth.CheckAuth(c)
-	if err != nil {
+	if err := s.auth.CheckAuth(c); err != nil {
 		return err
 	}
 	words := make([]*Word, len(r.Words))
@@ -77,8 +74,7 @@ type Count struct {
 
 // Count counts the words in a named wordlist.
 func (s *WordService) Count(c endpoints.Context) (*Count, error) {
-	err := s.auth.CheckAuth(c)
-	if err != nil {
+	if err := s.auth.CheckAuth(c); err != nil {
 		return nil, err
 	}
 	return nil, ErrNotImplemented
