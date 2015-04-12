@@ -6,33 +6,10 @@ import (
 	"github.com/GoogleCloudPlatform/go-endpoints/endpoints"
 )
 
-// const clientId = "YOUR-CLIENT-ID"
-
-var (
-	scopes    = []string{endpoints.EmailScope}
-	clientIds = []string{ /*clientId, */ endpoints.APIExplorerClientID}
-	audiences = []string{ /*clientId*/ }
-)
-
-type endpointsAuth struct{}
-
-func (a *endpointsAuth) CheckAuth(c endpoints.Context) error {
-	u, err := endpoints.CurrentUser(c, scopes, audiences, clientIds)
-	if err != nil {
-		return endpoints.UnauthorizedError
-	}
-	if u == nil {
-		return endpoints.UnauthorizedError
-	}
-	c.Debugf("Current user: %#v", u)
-	if u.Email != "AN EMAIL" { // TODO(arunjit): The obvious
-		return endpoints.ForbiddenError
-	}
-	return nil
-}
-
 func init() {
-	wordService := &WordService{&endpointsAuth{}}
+	config := GetConfig("secrets.json")
+	auth := &EndpointsAuth{config}
+	wordService := &WordService{auth}
 	api, err := endpoints.RegisterService(wordService,
 		"wordbox", "v1", "A box of words", true)
 	if err != nil {
@@ -47,7 +24,7 @@ func init() {
 		i := m.Info()
 		i.Name, i.HTTPMethod, i.Path, i.Desc = name, method, path, desc
 		if restrict {
-			i.Scopes, i.ClientIds, i.Audiences = scopes, clientIds, audiences
+			i.Scopes, i.ClientIds, i.Audiences = config.Scopes, config.ClientIds, config.Audiences
 		}
 	}
 
