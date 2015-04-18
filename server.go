@@ -9,8 +9,8 @@ import (
 func init() {
 	config := GetConfig("secrets.json")
 	auth := &EndpointsAuth{config}
-	wordService := &WordService{auth}
-	api, err := endpoints.RegisterService(wordService,
+	wordboxAPI := &WordboxAPI{auth}
+	api, err := endpoints.RegisterService(wordboxAPI,
 		"wordbox", "v1", "A box of words", true)
 	if err != nil {
 		log.Fatalf("Register service: %v", err)
@@ -40,5 +40,7 @@ func init() {
 		"Get a word from a named wordlist.", true)
 	register("GetPublic", "getpublic", "GET", "words/public",
 		"Get a word from the master wordlist.", false)
+	register("SetUsed", "setused", "PUT", "words/setused",
+		"Mark a word as used", true)
 	endpoints.HandleHTTP()
 }

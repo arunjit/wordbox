@@ -6,12 +6,12 @@ var (
 	// ErrNotImplemented error when something isn't implemented.
 	ErrNotImplemented = endpoints.NewAPIError("NotImplemented", "Not implemented", 501)
 
-	// ErrMissingValue error when a required value is missin.
+	// ErrMissingValue error when a required value is missing.
 	ErrMissingValue = endpoints.NewBadRequestError("Missing value")
 )
 
-// WordService is the endpoints service.
-type WordService struct {
+// WordboxAPI is the endpoints service.
+type WordboxAPI struct {
 	auth Authenticator
 }
 
@@ -31,8 +31,13 @@ type AddPublicReq struct {
 	Words []string `json:"words" endpoints:"req"`
 }
 
+// SetUsedReq is the request struct to mark a word as used.
+type SetUsedReq struct {
+	ID string `json:"id"`
+}
+
 // Get fetches a word from a named wordlist.
-func (s *WordService) Get(c endpoints.Context, r *GetReq) (*Word, error) {
+func (s *WordboxAPI) Get(c endpoints.Context, r *GetReq) (*Word, error) {
 	if err := s.auth.CheckAuth(c); err != nil {
 		return nil, err
 	}
@@ -40,12 +45,12 @@ func (s *WordService) Get(c endpoints.Context, r *GetReq) (*Word, error) {
 }
 
 // GetPublic fetches a word from the master wordlist.
-func (s *WordService) GetPublic(c endpoints.Context) (*Word, error) {
+func (s *WordboxAPI) GetPublic(c endpoints.Context) (*Word, error) {
 	return PublicWord(c)
 }
 
 // Add adds new words to a named wordlist.
-func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
+func (s *WordboxAPI) Add(c endpoints.Context, r *AddReq) error {
 	if err := s.auth.CheckAuth(c); err != nil {
 		return err
 	}
@@ -53,7 +58,7 @@ func (s *WordService) Add(c endpoints.Context, r *AddReq) error {
 }
 
 // AddPublic adds new words to the master wordlist.
-func (s *WordService) AddPublic(c endpoints.Context, r *AddPublicReq) error {
+func (s *WordboxAPI) AddPublic(c endpoints.Context, r *AddPublicReq) error {
 	if err := s.auth.CheckAuth(c); err != nil {
 		return err
 	}
@@ -73,7 +78,7 @@ type Count struct {
 }
 
 // Count counts the words in a named wordlist.
-func (s *WordService) Count(c endpoints.Context) (*Count, error) {
+func (s *WordboxAPI) Count(c endpoints.Context) (*Count, error) {
 	if err := s.auth.CheckAuth(c); err != nil {
 		return nil, err
 	}
@@ -81,10 +86,18 @@ func (s *WordService) Count(c endpoints.Context) (*Count, error) {
 }
 
 // CountPublic counts the words in the master wordlist.
-func (s *WordService) CountPublic(c endpoints.Context) (*Count, error) {
+func (s *WordboxAPI) CountPublic(c endpoints.Context) (*Count, error) {
 	n, err := PublicWordCount(c)
 	if err != nil {
 		return nil, err
 	}
 	return &Count{n}, nil
+}
+
+// SetUsed sets a word as used.
+func (s *WordboxAPI) SetUsed(c endpoints.Context, req *SetUsedReq) error {
+	if err := s.auth.CheckAuth(c); err != nil {
+		return err
+	}
+	return ErrNotImplemented
 }
