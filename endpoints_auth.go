@@ -24,10 +24,7 @@ type EndpointsAuth struct {
 // CheckAuth is the implementation of the [Authenticator] interface for endpoints.
 func (a *EndpointsAuth) CheckAuth(c endpoints.Context) error {
 	user, err := endpoints.CurrentUser(c, a.Config.Scopes, a.Config.Audiences, a.Config.ClientIds)
-	if err != nil {
-		return endpoints.UnauthorizedError
-	}
-	if user == nil {
+	if err != nil || user == nil {
 		return endpoints.UnauthorizedError
 	}
 	if !contains(a.Config.AllowedEmails, user.Email) {

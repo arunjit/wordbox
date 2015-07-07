@@ -38,6 +38,10 @@ type Word struct {
 // PublicWord fetches a word from the master wordlist.
 func PublicWord(c appengine.Context) (*Word, error) {
 	for i := 0; i < wordMaxUses; i++ {
+		// TODO(arunjit): Improve perf by trading memory for RPC calls.
+		// Create a projection query for all entities where u<wordMaxUses and
+		// ascending order of uses, on key and "u". Map `Uses` to an array of
+		// keys, then iterate over the keys of the map, starting at 0.
 		q := datastore.NewQuery(wordKind).
 			Filter("p =", true).
 			Filter("u =", i).
